@@ -1,0 +1,12 @@
+[package]
+name = "aid"
+version = "0.1.0"
+edition = "2024"
+
+[lib]
+name="aid"
+path="src/aid.rs"
+edition = "2021"
+crate-type = ["lib"]
+
+[dependencies]

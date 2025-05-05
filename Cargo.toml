@@ -1,0 +1,13 @@
+[package]
+name = "PhySim"
+version = "0.1.0"
+edition = "2021"
+build = "build-cargo.rs"
+
+[dependencies]
+aid = { version = "0.1.0", path = "aid" }
+libc = { version = "0.1.0", path = "libc" }
+raylib = { version = "0.1.0", path = "raylib" }
+
+[build-dependencies]
+build-target = "0.4"

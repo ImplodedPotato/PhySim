@@ -1,0 +1,2 @@
+[env]
+EMCC_CFLAGS = "-s ASYNCIFY -s USE_GLFW=3 -DPLATFORM_WEB -DGRAPHICS_API_OPENGL_ES2 -sEXPORTED_FUNCTIONS=_main --shell-file assets/template.html --preload-file assets -sEXPORTED_RUNTIME_METHODS=ccall,cwrap -o PhySim.html"

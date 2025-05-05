@@ -1,0 +1,15 @@
+[package]
+name = "raylib"
+version = "0.1.0"
+edition = "2021"
+build = "build.rs"
+
+[lib]
+name="raylib"
+path="src/raylib.rs"
+edition = "2021"
+
+[dependencies]
+
+[build-dependencies]
+build-target = "0.4"

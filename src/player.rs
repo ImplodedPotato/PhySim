@@ -1,5 +1,5 @@
 use aid::{BoolTo, Ternary};
-use crate::{PIXELS_PER_METER, GRAVITY_CONSTANT};
+use crate::{PIXELS_PER_METER, GRAVITY_CONSTANT, Ball, NUM_OF_BALLS};
 
 const PLAYER_DEBUG_INFO: bool = false;
 
@@ -32,7 +32,7 @@ impl Player {
         // jump
         self.velocity.y += raylib::is_key_pressed(raylib::KeyboardKey::KeyW).f32() * JUMP_DIST * -1.0;
 
-        self.velocity.y = raylib::is_key_pressed(raylib::KeyboardKey::KeyS).ternary(0.0, self.velocity.y)
+        self.velocity.y = raylib::is_key_pressed(raylib::KeyboardKey::KeyS).ternary(self.velocity.y.abs() * 2.0, self.velocity.y);
     }
 
     fn update_clamp(&mut self, screen: raylib::Vector2) {
@@ -64,14 +64,57 @@ impl Player {
         raylib::draw_rectangle_v(self.pos.mult_value(PIXELS_PER_METER), self.dim.mult_value(PIXELS_PER_METER), self.color);
     }
 
+    pub unsafe fn update_collision_with_balls(&mut self, balls: &mut [Ball; NUM_OF_BALLS]) {
+        for ball in balls.iter_mut() {
+            if !raylib::check_collision_circle_rec(ball.pos, ball.radius, raylib::Rectangle {
+                x: self.pos.x,
+                y: self.pos.y,
+                width: self.dim.x,
+                height: self.dim.y
+            }) {
+                continue;
+            }
+
+            let closest = raylib::Vector2 {
+                x: ball.pos.x.clamp(self.pos.x, self.pos.x + self.dim.x),
+                y: ball.pos.y.clamp(self.pos.y, self.pos.y + self.dim.y),
+            };
+
+            let delta = ball.pos.sub(closest);
+            let dist = delta.pythagorean();
+
+            if dist == 0.0 || dist >= ball.radius { continue; }
+
+            let normal = delta.div_value(dist);
+            let penetration = ball.radius - dist;
+
+            // positional correction
+            let correction = normal.mult_value(penetration / 2.0);
+            ball.pos.addeq(correction);
+            self.pos.subeq(correction);
+
+            // relative velocity
+            let rv = ball.velocity.sub(self.velocity);
+            let vel_along_normal = rv.dot(normal);
+            if vel_along_normal > 0.0 { continue; }
+
+            let elast = (self.elast + ball.elast) / 2.0;
+            let impulse_scalar = -(1.0 + elast) * vel_along_normal / (1.0 / self.mass + 1.0 / ball.mass);
+            let impulse = normal.mult_value(impulse_scalar);
+
+            self.velocity.subeq(impulse.div_value(self.mass));
+            ball.velocity.addeq(impulse.div_value(ball.mass));
+        }
+    }
+
     pub unsafe fn new() -> Self {
         Player{
             pos: raylib::Vector2::new_from(5.0),
             velocity: raylib::Vector2::zero(),
-            dim: raylib::Vector2::new_from(1.0),
+            dim: raylib::Vector2::new_from(2.0),
             elast: 0.85,
-            mass: 5.0,
-            color: raylib::WHITE,
+            mass: 50.0,
+            color: raylib::GREEN,
         }
     }
 }

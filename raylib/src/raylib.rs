@@ -180,6 +180,8 @@ extern "C" {
     // Basic shapes collision detection functions
     #[link_name="CheckCollisionCircles"]
     pub fn check_collision_circles(center1: Vector2, radius1: f32, center2: Vector2, radius2: f32) -> bool;
+    #[link_name="CheckCollisionCircleRec"]
+    pub fn check_collision_circle_rec(center: Vector2, radius: f32, rec: Rectangle) -> bool;
     #[link_name="CheckCollisionCircleLine"]
     pub fn check_collision_circle_line(center: Vector2, radius: f32, p1: Vector2, p2: Vector2);
     #[link_name="CheckCollisionPointRec"]

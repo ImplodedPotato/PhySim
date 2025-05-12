@@ -27,7 +27,7 @@ unsafe fn draw_grid(screen: raylib::Vector2) {
 }
 
 unsafe extern "C" fn game_loop(game_void: *mut c_void) {
-    let game = game_void as *mut Game;
+    let game: *mut Game = game_void as *mut Game;
     let player: *mut Player = &mut (*game).player;
 
     let dt = raylib::get_frame_time();
@@ -41,6 +41,7 @@ unsafe extern "C" fn game_loop(game_void: *mut c_void) {
     for i in 0..(*game).balls.len() {
         (*game).balls[i].update((*game).screen, dt);
         update_ball_to_ball_collision(i, &mut (*game).balls);
+        (*player).update_collision_with_balls(&mut (*game).balls);
     }
 
     (*player).update((*game).screen, dt);

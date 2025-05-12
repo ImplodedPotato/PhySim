@@ -4,9 +4,9 @@ use libc;
 
 const COLORS: [raylib::Color; 4] = [raylib::PINK, raylib::PURPLE, raylib::SKYBLUE, raylib::YELLOW];
 
-pub const NUM_OF_BALLS: usize = 128;
+pub const NUM_OF_BALLS: usize = 512;
 
-pub const PIXELS_PER_METER: f32 = 60.0;
+pub const PIXELS_PER_METER: f32 = 50.0;
 pub const GRAVITY_CONSTANT: f32 = 9.81;
 
 #[derive(Clone, Copy)]
@@ -61,8 +61,8 @@ impl Ball {
             mass: 0.2,
             color: COLORS[(libc::rand() % 4) as usize]
         };
-
         if libc::rand() % 2 == 0 { ball.velocity.x *= -1.0; }
+
         return ball;
     }
 

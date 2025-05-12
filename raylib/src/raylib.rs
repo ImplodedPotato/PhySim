@@ -28,6 +28,16 @@ pub struct Rectangle {
 }
 
 impl Vector2 {
+    pub unsafe fn zero() -> Vector2 {
+        vector_2_zero()
+    }
+    pub unsafe fn one() -> Vector2 {
+        vector_2_one()
+    }
+    pub unsafe fn new_from(num: f32) -> Vector2 {
+        Vector2{ x: num, y: num }
+    }
+
     pub fn pythagorean(&self) -> f32 {
         ((self.x * self.x) + (self.y * self.y)).sqrt()
     }
@@ -170,6 +180,8 @@ extern "C" {
     // Basic shapes collision detection functions
     #[link_name="CheckCollisionCircles"]
     pub fn check_collision_circles(center1: Vector2, radius1: f32, center2: Vector2, radius2: f32) -> bool;
+    #[link_name="CheckCollisionCircleLine"]
+    pub fn check_collision_circle_line(center: Vector2, radius: f32, p1: Vector2, p2: Vector2);
     #[link_name="CheckCollisionPointRec"]
     pub fn check_collision_point_rec(point: Vector2, rec: Rectangle) -> bool;
 
@@ -201,6 +213,8 @@ extern "C" {
     // Vector2 math
     #[link_name="Vector2Zero"]
     pub fn vector_2_zero() -> Vector2;
+    #[link_name="Vector2One"]
+        pub fn vector_2_one() -> Vector2;
     #[link_name="Vector2Add"]
     pub fn vector_2_add(v1: Vector2, v2: Vector2) -> Vector2;
     #[link_name="Vector2AddValue"]

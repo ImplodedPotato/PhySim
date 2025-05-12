@@ -1,7 +1,5 @@
 fn main() {
-    use std::path::Path;
     let arch = build_target::target_arch().unwrap();
-
 
     if arch == build_target::Arch::AARCH64 {
         println!("cargo:rustc-link-lib=raylib");

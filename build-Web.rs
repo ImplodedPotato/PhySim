@@ -11,7 +11,7 @@ fn main() -> std::io::Result<()> {
     if !fs::exists("out")? {
         fs::create_dir("out")?;
     }
-    if !fs::exists("out/libraylib.web.aa")? {
+    if !fs::exists("out/libraylib.web.a")? {
 
         if !fs::exists("external/raylib/src/libraylib.web.a")? {
             println!("Building Raylib");

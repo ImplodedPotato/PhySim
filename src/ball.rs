@@ -1,6 +1,7 @@
 use raylib;
 use std::cmp;
 use libc;
+use std::vec;
 
 const COLORS: [raylib::Color; 4] = [raylib::PINK, raylib::PURPLE, raylib::SKYBLUE, raylib::YELLOW];
 
@@ -71,12 +72,11 @@ impl Ball {
     }
 }
 
-pub unsafe fn ball_setup(screen: raylib::Vector2) -> [Ball; NUM_OF_BALLS] {
-    let balls: [Ball; NUM_OF_BALLS] = std::array::from_fn(|_| Ball::new(screen));
-    return balls;
+pub unsafe fn ball_setup(screen: raylib::Vector2) -> Vec<Ball> {
+    (0..NUM_OF_BALLS).map(|_| Ball::new(screen)).collect()
 }
 
-pub unsafe fn update_ball_to_ball_collision(index: usize, balls: &mut [Ball; NUM_OF_BALLS]) {
+pub unsafe fn update_ball_to_ball_collision(index: usize, balls: &mut Vec<Ball>) {
     for i in (index + 1)..balls.len() {
         if !raylib::check_collision_circles(balls[index].pos, balls[index].radius, balls[i].pos, balls[i].radius) { continue; }
 

@@ -47,6 +47,9 @@ impl Vector2 {
     pub fn addeq(&mut self, vec: Vector2) {
         unsafe { *self = vector_2_add(*self, vec); }
     }
+    pub fn add_value(self, value: f32) -> Vector2 {
+        unsafe { vector_2_add_value(self, value) }
+    }
     pub fn sub(self, vec: Vector2) -> Vector2 {
         unsafe { vector_2_subtract(self, vec) }
     }
@@ -100,6 +103,15 @@ pub unsafe fn init_window(width: i32, height: i32, title: &str) {
 
 pub unsafe fn get_screen_dimensions() -> Vector2 {
     Vector2{ x: get_screen_width() as f32, y: get_screen_height() as f32 }
+}
+
+
+pub unsafe fn draw_text(text: &str, pos_x: i32, pos_y: i32, font_size: i32, color: Color) {
+    draw_text_internal((text.to_string() + "\0").as_ptr() as *const i8, pos_x, pos_y, font_size, color);
+}
+
+pub unsafe fn measure_text(text: &str, font_size: i32) -> i32 {
+    measure_text_internal((text.to_string() + "\0").as_ptr() as *const i8, font_size)
 }
 
 extern "C" {
@@ -197,11 +209,11 @@ extern "C" {
     #[link_name="DrawFPS"]
     pub fn draw_fps(pos_x: i32, pos_y: i32);
     #[link_name="DrawText"]
-    pub fn draw_text(text: *const i8, pos_x: i32, pos_y: i32, font_size: i32, color: Color);
+    fn draw_text_internal(text: *const i8, pos_x: i32, pos_y: i32, font_size: i32, color: Color);
 
     // Text font info functions
     #[link_name="MeasureText"]
-    pub fn measure_text(text: *const i8, font_size: i32) -> i32;
+    fn measure_text_internal(text: *const i8, font_size: i32) -> i32;
 
     // Text strings management functions (no UTF-8 strings, only byte chars)
     #[link_name="TextFormat"]

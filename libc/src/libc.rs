@@ -1,5 +1,8 @@
 #[allow(dead_code)]
 
+#[cfg(target_family = "wasm")]
+use std::ffi::c_void;
+
 extern "C" {
     pub fn rand() -> i32;
     #[cfg(target_family = "wasm")]

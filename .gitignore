@@ -2,3 +2,9 @@
 /.idea
 /.DS_Store
 
+PhySim.data
+PhySim.html
+PhySim.js
+PhySim.wasm
+
+

@@ -4,9 +4,10 @@ mod ball;
 use crate::ball::*;
 mod player;
 use crate::player::*;
+use std::vec;
 
 #[cfg(target_family = "wasm")]
-use libc;
+use libc::emscripten_set_main_loop_arg;
 
 const GHOSTTY: raylib::Color = raylib::Color{ r: 40, g: 44, b: 52, a: 255 };
 
@@ -51,7 +52,7 @@ unsafe extern "C" fn game_loop(game_void: *mut c_void) {
 
     if (*game).boxes { draw_grid((*game).screen); }
 
-    for ball in (*game).balls {
+    for ball in (*game).balls.iter() {
         ball.draw();
     }
 
@@ -64,7 +65,7 @@ unsafe extern "C" fn game_loop(game_void: *mut c_void) {
 
 struct Game {
     screen: raylib::Vector2,
-    balls: [Ball; NUM_OF_BALLS],
+    balls: Vec<Ball>,
     boxes: bool,
     player: Player
 }
@@ -74,21 +75,22 @@ fn main() {
         raylib::set_config_flags(raylib::ConfigFlags::FlagWindowResizable | raylib::ConfigFlags::FlagMsaa4xHint);
         raylib::set_target_fps(120);
         let screen = raylib::Vector2{ x: 800.0, y: 600.0 };
-        raylib::init_window(screen.x as i32, screen.y as i32, "Pinball");
+        raylib::init_window(screen.x as i32, screen.y as i32, "PhySim");
 
-        let game = Box::<Game>::into_raw(Box::new(Game{
-            screen: screen,
+        let game = Box::new(Game {
+            screen,
             balls: ball_setup(screen),
             boxes: true,
-            player: Player::new()
-        }));
+            player: Player::new(),
+        });
+        let p_game = Box::into_raw(game) as *mut c_void;
 
         #[cfg(target_family = "wasm")]
-        emscripten_set_main_loop_arg(game_loop, game as *mut c_void, 0, 1);
+        emscripten_set_main_loop_arg(game_loop, p_game, 0, 1);
 
         #[cfg(any(target_family = "unix", target_family = "windows"))]
         while !raylib::window_should_close() {
-            game_loop(game as *mut c_void);
+            game_loop(p_game);
         }
     }
 }

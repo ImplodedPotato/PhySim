@@ -1,5 +1,6 @@
 use aid::{BoolTo, Ternary};
 use crate::{PIXELS_PER_METER, GRAVITY_CONSTANT, Ball, NUM_OF_BALLS};
+use std::vec;
 
 const PLAYER_DEBUG_INFO: bool = false;
 
@@ -64,7 +65,7 @@ impl Player {
         raylib::draw_rectangle_v(self.pos.mult_value(PIXELS_PER_METER), self.dim.mult_value(PIXELS_PER_METER), self.color);
     }
 
-    pub unsafe fn update_collision_with_balls(&mut self, balls: &mut [Ball; NUM_OF_BALLS]) {
+    pub unsafe fn update_collision_with_balls(&mut self, balls: &mut Vec<Ball>) {
         for ball in balls.iter_mut() {
             if !raylib::check_collision_circle_rec(ball.pos, ball.radius, raylib::Rectangle {
                 x: self.pos.x,
@@ -114,7 +115,7 @@ impl Player {
             dim: raylib::Vector2::new_from(2.0),
             elast: 0.85,
             mass: 50.0,
-            color: raylib::GREEN,
+            color: raylib::WHITE,
         }
     }
 }
